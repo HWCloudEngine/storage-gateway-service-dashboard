@@ -1,0 +1,12 @@
+include AUTHORS
+include README.rst
+include ChangeLog
+include LICENSE
+
+recursive-include storage_gateway_dashboard/templates *
+
+exclude .gitignore
+exclude .gitreview
+
+global-exclude *.pyc
+

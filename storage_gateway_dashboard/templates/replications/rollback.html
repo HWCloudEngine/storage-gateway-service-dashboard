@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Rollback Replication" %}{% endblock %}
+
+{% block main %}
+    {% include 'replications/_rollback.html' %}
+{% endblock %}

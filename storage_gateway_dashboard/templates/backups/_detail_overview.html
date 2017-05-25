@@ -1,0 +1,25 @@
+{% load i18n sizeformat parse_date %}
+
+<div class="detail">
+  <dl class="dl-horizontal">
+    <dt>{% trans "Name" %}</dt>
+    <dd data-display="{{ backup.name|default:backup.id }}">{{ backup.name }}</dd>
+    <dt>{% trans "ID" %}</dt>
+    <dd>{{ backup.id }}</dd>
+    {% if backup.description %}
+    <dt>{% trans "Description" %}</dt>
+    <dd>{{ backup.description }}</dd>
+    {% endif %}
+    <dt>{% trans "Status" %}</dt>
+    <dd>{{ backup.status|capfirst }}</dd>
+    {% if volume %}
+    <dt>{% trans "Volume" %}</dt>
+    <dd>
+      <a href="{% url 'horizon:storage-gateway:volumes:detail' backup.volume_id %}">
+        {{ volume.name }}
+      </a>
+    </dd>
+    {% endif %}
+  </dl>
+
+</div>

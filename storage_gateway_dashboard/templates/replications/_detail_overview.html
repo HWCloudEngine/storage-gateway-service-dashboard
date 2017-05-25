@@ -1,0 +1,17 @@
+{% load i18n sizeformat parse_date %}
+
+<div class="detail">
+  <dl class="dl-horizontal">
+    <dt>{% trans "Name" %}</dt>
+    <dd data-display="{{ replication.name|default:replication.id }}">{{ replication.name }}</dd>
+    <dt>{% trans "ID" %}</dt>
+    <dd>{{ replication.id }}</dd>
+    {% if replication.description %}
+    <dt>{% trans "Description" %}</dt>
+    <dd>{{ replication.description }}</dd>
+    {% endif %}
+    <dt>{% trans "Status" %}</dt>
+    <dd>{{ replication.status|capfirst }}</dd>
+  </dl>
+
+</div>

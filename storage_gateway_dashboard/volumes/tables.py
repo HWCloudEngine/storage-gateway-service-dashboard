@@ -34,6 +34,7 @@ from storage_gateway_dashboard.replications.tables import \
 
 
 DISABLE_STATES = ("enabled",)
+REP_DISABLE_STATES = ('deleted', 'disabled', None)
 DELETABLE_STATES = ("available", "error")
 ENABLE_STATES = ("available",)
 VOLUME_ATTACH_READY_STATES = ("ACTIVE", "SHUTOFF")
@@ -69,7 +70,7 @@ class DisableVolume(tables.DeleteAction):
     def allowed(self, request, volume=None):
         if volume:
             return volume.status in DISABLE_STATES and \
-                            volume.replicate_status not in DISABLE_STATES
+                            volume.replicate_status in REP_DISABLE_STATES
         return True
 
 

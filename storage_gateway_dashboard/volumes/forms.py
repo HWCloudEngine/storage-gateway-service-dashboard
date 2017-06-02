@@ -247,8 +247,8 @@ class CreateForm(forms.SelfHandlingForm):
                 not cleaned_data.get('checkpoint_source')):
             msg = _('Checkpoint source must be specified')
             self._errors['checkpoint_source'] = self.error_class([msg])
-        elif (source_type == 'snapshot_source' and
-                  not cleaned_data.get('snapshot_source')):
+        elif (source_type == 'snapshot_source' and not cleaned_data.get(
+                'snapshot_source')):
             msg = _('Snapshot source must be specified')
             self._errors['snapshot_source'] = self.error_class([msg])
         return cleaned_data
@@ -267,8 +267,8 @@ class CreateForm(forms.SelfHandlingForm):
     def handle(self, request, data):
         try:
             usages = quotas.tenant_limit_usages(self.request)
-            availableGB = usages['maxTotalVolumeGigabytes'] - \
-                          usages['gigabytesUsed']
+            availableGB = \
+                usages['maxTotalVolumeGigabytes'] - usages['gigabytesUsed']
             availableVol = usages['maxTotalVolumes'] - usages['volumesUsed']
 
             snapshot_id = None
@@ -278,7 +278,7 @@ class CreateForm(forms.SelfHandlingForm):
             volume_type = data.get('type')
 
             if (data.get("snapshot_source", None) and
-                        source_type in ['', None, 'snapshot_source']):
+                    source_type in ['', None, 'snapshot_source']):
                 # Create from Snapshot
                 snapshot = self.get_snapshot(request,
                                              data["snapshot_source"])
@@ -293,7 +293,7 @@ class CreateForm(forms.SelfHandlingForm):
                 az = None
                 volume_type = ""
             if (data.get("checkpoint_source", None) and
-                        source_type in ['', None, 'checkpoint_source']):
+                    source_type in ['', None, 'checkpoint_source']):
                 # Create from Checkpoint
                 checkpoint = self.get_checkpoint(request,
                                                  data["snapshot_source"])
@@ -364,12 +364,23 @@ class AttachForm(forms.SelfHandlingForm):
 
     device = forms.CharField(label=_("Device Name"),
                              widget=forms.TextInput(attrs={'placeholder':
-                                                               '/dev/vdc'}),
+                                                    '/dev/vdc'}),
                              required=False,
                              help_text=_("Actual device name may differ due "
                                          "to hypervisor settings. If not "
                                          "specified, then hypervisor will "
                                          "select a device name."))
+    instance_ip = forms.IPField(label=_("Instance Network Address"),
+                                initial="",
+                                widget=forms.TextInput(attrs={
+                                    'class': 'switched',
+                                    'data-switch-on': 'source',
+                                    'data-source-manual': _("Network Address"),
+                                }),
+                                help_text=_(
+                                        "The current version we need to "
+                                        "provider the ip of instance"),
+                                version=forms.IPv4 | forms.IPv6)
 
     def __init__(self, *args, **kwargs):
         super(AttachForm, self).__init__(*args, **kwargs)
@@ -411,13 +422,13 @@ class AttachForm(forms.SelfHandlingForm):
         instance_name = instance_name.rsplit(" (")[0]
 
         # api requires non-empty device name or None
-        device = data.get('device') or None
+        instance_ip = data.get('instance_ip') or None
 
         try:
             attach = sg_api.volume_attach(request,
                                           data['volume_id'],
                                           data['instance'],
-                                          device)
+                                          instance_ip)
             volume = sg_api.volume_get(request, data('volume_id'))
             message = _('Attaching volume %(vol)s to instance '
                         '%(inst)s on %(dev)s.') % {"vol": volume.name,

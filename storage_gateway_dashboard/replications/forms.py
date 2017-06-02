@@ -75,8 +75,10 @@ class CreateForm(forms.SelfHandlingForm):
         volumes = []
         try:
             enabled = sg_api.VOLUME_STATE_ENABLED
-            volumes = sg_api.volume_list(self.request,
-                                         search_opts=dict(status=enabled))
+            for vol in sg_api.volume_list(self.request,
+                                          search_opts=dict(status=enabled)):
+                if vol.replicate_status in ['deleted', 'disabled', None]:
+                    volumes.append(vol)
         except Exception:
             exceptions.handle(request,
                               _('Unable to retrieve list of volumes.'))
@@ -93,11 +95,11 @@ class CreateForm(forms.SelfHandlingForm):
 
             if master_id == slave_id:
                 error_message = (_('The slave volume and master volume can not'
-                                   'be the same'))
+                                   ' be the same'))
                 raise ValidationError(error_message)
             if master_vol.availability_zone == slave_vol.availability_zone:
                 error_message = (_('The slave volume and master volume can not'
-                                   'be the same availability_zone'))
+                                   ' be the same availability_zone'))
                 raise ValidationError(error_message)
 
             replication = sg_api.volume_replication_create(

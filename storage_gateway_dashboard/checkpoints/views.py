@@ -101,7 +101,7 @@ class DetailView(tabs.TabView):
         context = super(DetailView, self).get_context_data(**kwargs)
         checkpoint = self.get_data()
         checkpoint.replication_url = reverse(self.replication_url,
-                                             args=(checkpoint.volume_id,))
+                                             args=(checkpoint.replication_id,))
         table = checkpoint_tables.VolumeCheckpointsTable(self.request)
         context["checkpoint"] = checkpoint
         context["url"] = self.get_redirect_url()

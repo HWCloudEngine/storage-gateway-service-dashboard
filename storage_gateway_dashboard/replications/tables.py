@@ -215,7 +215,8 @@ class CreateReplication(tables.LinkAction):
 
 
 class DeleteReplication(policy.PolicyTargetMixin, tables.DeleteAction):
-    help_text = _("Deleted volume replications are not recoverable.")
+    help_text = _("Deleted volume replications are not recoverable.If there is"
+                  " a checkpoint it will not be allowed to delete")
 
     @staticmethod
     def action_present(count):
@@ -234,8 +235,11 @@ class DeleteReplication(policy.PolicyTargetMixin, tables.DeleteAction):
         )
 
     def allowed(self, request, replication=None):
-        if replication:
-            return replication.status in REPLICATION_DELETABLE_STATES
+        if replication and replication.status in REPLICATION_DELETABLE_STATES:
+            checkpoints = sg_api.volume_checkpoint_list(
+                    request, search_opts=dict(replication_id=replication.id))
+            if checkpoints:
+                return False
         return True
 
     def delete(self, request, obj_id):

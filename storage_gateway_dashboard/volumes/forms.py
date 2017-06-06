@@ -296,7 +296,7 @@ class CreateForm(forms.SelfHandlingForm):
                     source_type in ['', None, 'checkpoint_source']):
                 # Create from Checkpoint
                 checkpoint = self.get_checkpoint(request,
-                                                 data["snapshot_source"])
+                                                 data["checkpoint_source"])
                 checkpoint_id = checkpoint.id
                 check_size = self.fields['size'].initial
                 if data['size'] < check_size:
@@ -425,15 +425,14 @@ class AttachForm(forms.SelfHandlingForm):
         instance_ip = data.get('instance_ip') or None
 
         try:
-            attach = sg_api.volume_attach(request,
-                                          data['volume_id'],
-                                          data['instance'],
-                                          instance_ip)
-            volume = sg_api.volume_get(request, data('volume_id'))
+            sg_api.volume_attach(request,
+                                 data['volume_id'],
+                                 data['instance'],
+                                 instance_ip)
+            volume = sg_api.volume_get(request, data['volume_id'])
             message = _('Attaching volume %(vol)s to instance '
-                        '%(inst)s on %(dev)s.') % {"vol": volume.name,
-                                                   "inst": instance_name,
-                                                   "dev": attach.device}
+                        '%(inst)s.') % {"vol": volume.name,
+                                        "inst": instance_name}
             messages.info(request, message)
             return True
         except Exception:

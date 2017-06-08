@@ -328,6 +328,12 @@ def volume_snapshot_get(request, snapshot_id):
 
 
 @profiler.trace
+def volume_snapshot_rollback(request, snapshot_id):
+    rollback = sgsclient(request).snapshots.rollback(snapshot_id)
+    return rollback
+
+
+@profiler.trace
 def volume_snapshot_list(request, search_opts=None):
     snapshots, _, __ = volume_snapshot_list_paged(request,
                                                   search_opts=search_opts,

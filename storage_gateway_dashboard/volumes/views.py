@@ -271,6 +271,36 @@ class CreateView(forms.ModalFormView):
         return json.dumps(type_descriptions)
 
 
+class RollbackVolume(forms.ModalFormView):
+    form_class = volume_forms.RollbackForm
+    template_name = 'volumes/rollback.html'
+    submit_url = "horizon:storage-gateway:volumes:rollback"
+    success_url = reverse_lazy('horizon:storage-gateway:volumes:index')
+    page_title = _("Rollback Volume")
+
+    def get_context_data(self, **kwargs):
+        context = super(RollbackVolume, self).get_context_data(**kwargs)
+        context['volume_id'] = self.kwargs['volume_id']
+        args = (self.kwargs['volume_id'],)
+        context['submit_url'] = reverse(self.submit_url, args=args)
+        return context
+
+    def get_initial(self):
+        snapshots = self._get_snapshots()
+        return {'volume_id': self.kwargs["volume_id"],
+                'snapshots': snapshots}
+
+    def _get_snapshots(self):
+        try:
+            snapshots = sg_api.volume_snapshot_list(self.request)
+        except Exception:
+            redirect = self.get_redirect_url()
+            exceptions.handle(self.request,
+                              _('Unable to retrieve snapshots.'),
+                              redirect=redirect)
+        return snapshots
+
+
 class UpdateView(forms.ModalFormView):
     form_class = volume_forms.UpdateForm
     modal_id = "update_volume_modal"

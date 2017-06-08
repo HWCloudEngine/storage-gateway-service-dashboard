@@ -37,4 +37,7 @@ urlpatterns = [
     url(r'^(?P<volume_id>[^/]+)/update/$',
         views.UpdateView.as_view(),
         name='update'),
+    url(r'^(?P<volume_id>[^/]+)/rollback/$',
+        views.RollbackVolume.as_view(),
+        name='rollback'),
 ]

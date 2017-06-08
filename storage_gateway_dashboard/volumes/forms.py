@@ -479,6 +479,49 @@ class CreateSnapshotForm(forms.SelfHandlingForm):
                               redirect=redirect)
 
 
+class RollbackForm(forms.SelfHandlingForm):
+    snapshot = forms.ThemableChoiceField(label=_("Rollback Volume"),
+                                         help_text=_(
+                                                   "Select an snapshot to "
+                                                   "rollback."))
+
+    def __init__(self, request, *args, **kwargs):
+        super(RollbackForm, self).__init__(request, *args, **kwargs)
+
+        # populate replication_id
+        volume_id = kwargs.get('initial', {}).get('volume_id', [])
+        self.fields['volume_id'] = forms.CharField(
+                widget=forms.HiddenInput(), initial=volume_id)
+        # Populate snapshot choices
+        snapshot_list = kwargs.get('initial', {}).get('snapshots', [])
+        snapshots = []
+        for snapshot in snapshot_list:
+            if snapshot.volume_id == volume_id:
+                snapshots.append(
+                        (snapshot.id, '%s (%s)' % (snapshot.name,
+                                                   snapshot.id)))
+        if snapshots:
+            snapshots.insert(0, ("", _("Select an snapshot")))
+        else:
+            snapshots = (("", _("No snapshots available")),)
+        self.fields['snapshot'].choices = snapshots
+
+    def handle(self, request, data):
+        try:
+            message = _('Rollback volume to snapshot "%s".') % \
+                      data['snapshot']
+            rollback = sg_api.volume_snapshot_rollback(request,
+                                                       data['snapshot'])
+            messages.info(request, message)
+            return rollback
+        except Exception:
+            redirect = reverse("horizon:storage-gateway:snapshots:index")
+            msg = _('Unable to rollback volume.')
+            exceptions.handle(request,
+                              msg,
+                              redirect=redirect)
+
+
 class UpdateForm(forms.SelfHandlingForm):
     name = forms.CharField(max_length=255,
                            label=_("Volume Name"),

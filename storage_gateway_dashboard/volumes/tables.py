@@ -321,6 +321,22 @@ class CreateBackup(tables.LinkAction):
         return True
 
 
+class RollbackVolume(tables.LinkAction):
+    name = "rollback-volume"
+    verbose_name = _("Rollback Volume")
+    url = "horizon:storage-gateway:volumes:rollback"
+    classes = ("ajax-modal",)
+    icon = "camera"
+
+    def allowed(self, request, volume=None):
+        if volume and volume.status in ['enabled', 'in-use']:
+            snapshots = sg_api.volume_snapshot_list(request)
+            for snapshot in snapshots:
+                if snapshot.volume_id == volume.id:
+                    return True
+        return False
+
+
 class VolumesTable(VolumesTableBase):
     name = tables.WrappingColumn("name",
                                  verbose_name=_("Name"),
@@ -348,7 +364,7 @@ class VolumesTable(VolumesTableBase):
                          VolumesFilterAction)
         row_actions = ((EditVolume,) +
                        (EditAttachments, CreateSnapshot, CreateBackup,
-                        DisableVolume, DeleteVolume))
+                        DisableVolume, DeleteVolume, RollbackVolume))
 
 
 class DetachVolume(tables.BatchAction):

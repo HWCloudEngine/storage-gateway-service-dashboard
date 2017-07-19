@@ -21,7 +21,6 @@ from oslo_log import log as logging
 
 from openstack_dashboard.api import base
 from openstack_dashboard.api import nova
-from openstack_dashboard.contrib.developer.profiler import api as profiler
 from sgsclient import client
 
 
@@ -129,23 +128,19 @@ def update_pagination(entities, page_size, marker, sort_dir):
     return entities, has_more_data, has_prev_data
 
 
-@profiler.trace
 def volume_backup_create(request, volume_id, name, description):
     backup = sgsclient(request).backups.create(volume_id, name, description)
     return backup
 
 
-@profiler.trace
 def volume_backup_delete(request, backup_id):
     return sgsclient(request).backups.delete(backup_id)
 
 
-@profiler.trace
 def volume_backup_restore(request, backup_id, volume_id):
     return sgsclient(request).backups.restore(backup_id, volume_id)
 
 
-@profiler.trace
 def volume_backup_get(request, backup_id):
     backup = sgsclient(request).backups.get(backup_id)
     return backup
@@ -156,7 +151,6 @@ def volume_backup_list(request):
     return backups
 
 
-@profiler.trace
 def volume_backup_list_paged(request, marker=None, paginate=False,
                              sort_dir="desc"):
     has_more_data = False
@@ -187,7 +181,6 @@ def volume_backup_list_paged(request, marker=None, paginate=False,
     return backups, has_more_data, has_prev_data
 
 
-@profiler.trace
 def volume_create(request, size=None, snapshot_id=None, checkpoint_id=None,
                   volume_type=None, availability_zone=None,
                   name=None, description=None):
@@ -203,12 +196,10 @@ def volume_create(request, size=None, snapshot_id=None, checkpoint_id=None,
     return volume
 
 
-@profiler.trace
 def volume_delete(request, volume_id):
     return sgsclient(request).volumes.delete(volume_id)
 
 
-@profiler.trace
 def volume_enable(request, volume_id, name=None, description=None):
     data = {'name': name,
             'description': description}
@@ -217,23 +208,19 @@ def volume_enable(request, volume_id, name=None, description=None):
     return volume
 
 
-@profiler.trace
 def volume_disable(request, volume_id):
     return sgsclient(request).volumes.disable(volume_id)
 
 
-@profiler.trace
 def volume_attach(request, volume_id, instance_uuid, instance_ip, mode='rw'):
     return sgsclient(request).volumes.attach(volume_id, instance_uuid,
                                              instance_ip, mode)
 
 
-@profiler.trace
 def volume_detach(request, volume_id, instance_uuid=None):
     return sgsclient(request).volumes.detach(volume_id, instance_uuid)
 
 
-@profiler.trace
 def volume_get(request, volume_id):
     volume_data = sgsclient(request).volumes.get(volume_id)
 
@@ -250,7 +237,6 @@ def volume_get(request, volume_id):
     return volume_data
 
 
-@profiler.trace
 def volume_list_paged(request, search_opts=None, marker=None, paginate=False,
                       sort_dir="desc"):
     """To see all volumes in the cloud as an admin you can pass in a special
@@ -291,7 +277,6 @@ def volume_list(request, search_opts=None, marker=None, sort_dir="desc"):
     return volumes
 
 
-@profiler.trace
 def volume_update(request, volume_id, name, description):
     vol_data = {'name': name,
                 'description': description}
@@ -299,7 +284,6 @@ def volume_update(request, volume_id, name, description):
                                              **vol_data)
 
 
-@profiler.trace
 def volume_snapshot_create(request, volume_id, name=None, description=None):
     data = {'name': name,
             'description': description}
@@ -308,12 +292,10 @@ def volume_snapshot_create(request, volume_id, name=None, description=None):
             volume_id, **data)
 
 
-@profiler.trace
 def volume_snapshot_delete(request, snapshot_id):
     return sgsclient(request).snapshots.delete(snapshot_id)
 
 
-@profiler.trace
 def volume_snapshot_update(request, snapshot_id, name, description):
     snapshot_data = {'name': name,
                      'description': description}
@@ -321,19 +303,16 @@ def volume_snapshot_update(request, snapshot_id, name, description):
                                                **snapshot_data)
 
 
-@profiler.trace
 def volume_snapshot_get(request, snapshot_id):
     snapshot = sgsclient(request).snapshots.get(snapshot_id)
     return snapshot
 
 
-@profiler.trace
 def volume_snapshot_rollback(request, snapshot_id):
     rollback = sgsclient(request).snapshots.rollback(snapshot_id)
     return rollback
 
 
-@profiler.trace
 def volume_snapshot_list(request, search_opts=None):
     snapshots, _, __ = volume_snapshot_list_paged(request,
                                                   search_opts=search_opts,
@@ -341,7 +320,6 @@ def volume_snapshot_list(request, search_opts=None):
     return snapshots
 
 
-@profiler.trace
 def volume_snapshot_list_paged(request, search_opts=None, marker=None,
                                paginate=False, sort_dir="desc"):
     has_more_data = False
@@ -372,7 +350,6 @@ def volume_snapshot_list_paged(request, search_opts=None, marker=None,
     return snapshots, has_more_data, has_prev_data
 
 
-@profiler.trace
 def volume_checkpoint_create(request, replication_id, name=None,
                              description=None):
     data = {'name': name,
@@ -382,12 +359,10 @@ def volume_checkpoint_create(request, replication_id, name=None,
             replication_id, **data)
 
 
-@profiler.trace
 def volume_checkpoint_delete(request, checkpoint_id):
     return sgsclient(request).checkpoints.delete(checkpoint_id)
 
 
-@profiler.trace
 def volume_checkpoint_update(request, checkpoint_id, name, description):
     checkpoint_data = {'name': name,
                        'description': description}
@@ -395,13 +370,11 @@ def volume_checkpoint_update(request, checkpoint_id, name, description):
                                                  **checkpoint_data)
 
 
-@profiler.trace
 def volume_checkpoint_get(request, checkpoint_id):
     checkpoint = sgsclient(request).checkpoints.get(checkpoint_id)
     return checkpoint
 
 
-@profiler.trace
 def volume_checkpoint_list(request, search_opts=None):
     checkpoints, _, __ = volume_checkpoint_list_paged(request,
                                                       search_opts=search_opts,
@@ -409,7 +382,6 @@ def volume_checkpoint_list(request, search_opts=None):
     return checkpoints
 
 
-@profiler.trace
 def volume_checkpoint_list_paged(request, search_opts=None, marker=None,
                                  paginate=False, sort_dir="desc"):
     has_more_data = False
@@ -440,12 +412,10 @@ def volume_checkpoint_list_paged(request, search_opts=None, marker=None,
     return checkpoints, has_more_data, has_prev_data
 
 
-@profiler.trace
 def volume_checkpoint_rollback(request, checkpoint_id):
     return sgsclient(request).checkpoints.rollback(checkpoint_id)
 
 
-@profiler.trace
 def volume_replication_create(request, master_volume, slave_volume,
                               name=None, description=None):
     data = {'name': name,
@@ -455,12 +425,10 @@ def volume_replication_create(request, master_volume, slave_volume,
                                                   slave_volume, **data)
 
 
-@profiler.trace
 def volume_replication_delete(request, replication_id):
     return sgsclient(request).replications.delete(replication_id)
 
 
-@profiler.trace
 def volume_replication_update(request, replication_id, name, description):
     replication_data = {'name': name,
                         'description': description}
@@ -468,20 +436,17 @@ def volume_replication_update(request, replication_id, name, description):
                                                   **replication_data)
 
 
-@profiler.trace
 def volume_replication_get(request, replication_id):
     replication = sgsclient(request).replications.get(replication_id)
     return replication
 
 
-@profiler.trace
 def volume_replication_list(request, search_opts=None):
     replications, _, __ = volume_replication_list_paged(
             request, search_opts=search_opts, paginate=False)
     return replications
 
 
-@profiler.trace
 def volume_replication_list_paged(request, search_opts=None, marker=None,
                                   paginate=False, sort_dir="desc"):
     has_more_data = False
@@ -512,21 +477,17 @@ def volume_replication_list_paged(request, search_opts=None, marker=None,
     return replications, has_more_data, has_prev_data
 
 
-@profiler.trace
 def volume_replication_enable(request, replication_id):
     return sgsclient(request).replications.enable(replication_id)
 
 
-@profiler.trace
 def volume_replication_disable(request, replication_id):
     return sgsclient(request).replications.disable(replication_id)
 
 
-@profiler.trace
 def volume_replication_failover(request, replication_id):
     return sgsclient(request).replications.failover(replication_id)
 
 
-@profiler.trace
 def volume_replication_reverse(request, replication_id):
     return sgsclient(request).replications.reverse(replication_id)

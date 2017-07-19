@@ -24,6 +24,7 @@ from horizon import tables
 from openstack_dashboard import policy
 
 from storage_gateway_dashboard.api import api as sg_api
+from storage_gateway_dashboard.common import table as common_table
 from storage_gateway_dashboard.volumes \
     import tables as volume_tables
 
@@ -98,7 +99,7 @@ class UpdateRow(tables.Row):
         return snapshot
 
 
-class SnapshotVolumeNameColumn(tables.WrappingColumn):
+class SnapshotVolumeNameColumn(common_table.WrappingColumn):
     def get_raw_data(self, snapshot):
         volume = snapshot._volume
         if volume:
@@ -124,7 +125,7 @@ class VolumeSnapshotsFilterAction(tables.FilterAction):
 
 
 class VolumeSnapshotsTable(volume_tables.VolumesTableBase):
-    name = tables.WrappingColumn(
+    name = common_table.WrappingColumn(
             "name",
             verbose_name=_("Name"),
             link="horizon:storage-gateway:snapshots:detail")

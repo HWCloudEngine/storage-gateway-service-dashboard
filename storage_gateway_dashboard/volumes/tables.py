@@ -29,6 +29,7 @@ from openstack_dashboard import api
 from openstack_dashboard import policy
 
 from storage_gateway_dashboard.api import api as sg_api
+from storage_gateway_dashboard.common import table as common_table
 from storage_gateway_dashboard.replications.tables import \
     VolumeReplicationsTable as ReplicationsTable
 
@@ -222,7 +223,7 @@ def get_attachment_name(request, attachment):
     return instance
 
 
-class AttachmentColumn(tables.WrappingColumn):
+class AttachmentColumn(common_table.WrappingColumn):
     """Customized column class.
 
     So it that does complex processing on the attachments
@@ -338,9 +339,9 @@ class RollbackVolume(tables.LinkAction):
 
 
 class VolumesTable(VolumesTableBase):
-    name = tables.WrappingColumn("name",
-                                 verbose_name=_("Name"),
-                                 link="horizon:storage-gateway:volumes:detail")
+    name = common_table.WrappingColumn(
+            "name", verbose_name=_("Name"),
+            link="horizon:storage-gateway:volumes:detail")
     size = tables.Column(get_size,
                          verbose_name=_("Size"),
                          attrs={'data-type': 'size'})
@@ -404,7 +405,7 @@ class DetachVolume(tables.BatchAction):
         return reverse('horizon:storage-gateway:volumes:index')
 
 
-class AttachedInstanceColumn(tables.WrappingColumn):
+class AttachedInstanceColumn(common_table.WrappingColumn):
     """Customized column class that does complex processing on the attachments
     for a volume instance.
     """

@@ -25,6 +25,7 @@ from horizon import tables
 from openstack_dashboard import policy
 
 from storage_gateway_dashboard.api import api as sg_api
+from storage_gateway_dashboard.common import table as common_table
 
 REPLICATION_DELETABLE_STATES = ("error", "disabled", 'failed-over')
 
@@ -361,7 +362,7 @@ class VolumeReplicationsTable(tables.DataTable):
         ("rolling-back", pgettext_lazy("Current status of a Volume",
                                        u"Rolling-back")),
     )
-    name = tables.WrappingColumn(
+    name = common_table.WrappingColumn(
             "name", verbose_name=_("Name"),
             link="horizon:storage-gateway:replications:detail")
     description = tables.Column("description",

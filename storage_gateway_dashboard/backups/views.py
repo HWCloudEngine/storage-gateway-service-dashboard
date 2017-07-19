@@ -34,6 +34,7 @@ from storage_gateway_dashboard.common import table as common_table
 class BackupsView(tables.DataTableView, common_table.PagedTableMixin):
     table_class = backup_tables.BackupsTable
     page_title = _("Volume Backups")
+    template_name = 'common/_data_table_view.html'
 
     def allowed(self, request):
         return True

@@ -122,6 +122,7 @@ class VolumesView(common_table.PagedTableMixin, VolumeTableMixIn,
                   tables.DataTableView):
     table_class = volume_tables.VolumesTable
     page_title = _("Storage Gateway Volumes")
+    template_name = 'common/_data_table_view.html'
 
     def get_data(self):
         volumes = self._get_volumes()

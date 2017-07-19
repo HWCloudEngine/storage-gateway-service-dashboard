@@ -33,6 +33,7 @@ from storage_gateway_dashboard.snapshots \
 class SnapshotsView(tables.DataTableView, common_table.PagedTableMixin):
     table_class = vol_snapshot_tables.VolumeSnapshotsTable
     page_title = _("Volume Snapshots")
+    template_name = 'common/_data_table_view.html'
 
     def get_data(self):
         snapshots = []

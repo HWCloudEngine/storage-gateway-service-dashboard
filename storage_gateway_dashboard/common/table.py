@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from horizon.tables.base import Column  # noqa
+
 
 class PagedTableMixin(object):
     def __init__(self, *args, **kwargs):
@@ -38,3 +40,11 @@ class PagedTableMixin(object):
             if marker:
                 return marker, "desc"
             return None, "desc"
+
+
+class WrappingColumn(Column):
+    """A column that wraps its contents. Useful for data like UUIDs or names"""
+
+    def __init__(self, *args, **kwargs):
+        super(WrappingColumn, self).__init__(*args, **kwargs)
+        self.classes.append('word-break')

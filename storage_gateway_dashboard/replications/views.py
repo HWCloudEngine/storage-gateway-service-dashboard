@@ -42,6 +42,7 @@ from storage_gateway_dashboard.replications \
 class ReplicationsView(common_table.PagedTableMixin, tables.DataTableView):
     table_class = rep_tables.VolumeReplicationsTable
     page_title = _("Storage Gateway Replications")
+    template_name = 'common/_data_table_view.html'
 
     def get_data(self):
         replications = []

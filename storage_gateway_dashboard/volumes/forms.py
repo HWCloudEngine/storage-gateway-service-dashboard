@@ -32,6 +32,7 @@ from openstack_dashboard.api import nova
 from openstack_dashboard.usage import quotas
 
 from storage_gateway_dashboard.api import api as sg_api
+from storage_gateway_dashboard.common import fields as common_fields
 from storage_gateway_dashboard.volumes import tables
 
 
@@ -73,19 +74,19 @@ class CreateForm(forms.SelfHandlingForm):
     volume_source_type = forms.ChoiceField(
             label=_("Volume Source Type"),
             required=False,
-            widget=forms.ThemableSelectWidget(attrs={
+            widget=common_fields.ThemableSelectWidget(attrs={
                 'class': 'switchable',
                 'data-slug': 'source'}))
     snapshot_source = forms.ChoiceField(
             label=_("Use snapshot as a source"),
-            widget=forms.ThemableSelectWidget(
+            widget=common_fields.ThemableSelectWidget(
                     attrs={'class': 'snapshot-selector'},
                     data_attrs=('name', 'id'),
                     transform=lambda x: "%s (%s GiB)" % (x.name, x.id)),
             required=False)
     checkpoint_source = forms.ChoiceField(
             label=_("Use checkpoint as a source"),
-            widget=forms.ThemableSelectWidget(
+            widget=common_fields.ThemableSelectWidget(
                     attrs={'class': 'snapshot-selector'},
                     data_attrs=('name', 'id'),
                     transform=lambda x: "%s (%s GiB)" % (x.name, x.id)),
@@ -93,7 +94,7 @@ class CreateForm(forms.SelfHandlingForm):
     type = forms.ChoiceField(
             label=_("Type"),
             required=False,
-            widget=forms.ThemableSelectWidget(
+            widget=common_fields.ThemableSelectWidget(
                     attrs={'class': 'switched',
                            'data-switch-on': 'source',
                            'data-source-no_source_type': _('Type'),
@@ -102,7 +103,7 @@ class CreateForm(forms.SelfHandlingForm):
     availability_zone = forms.ChoiceField(
             label=_("Availability Zone"),
             required=False,
-            widget=forms.ThemableSelectWidget(
+            widget=common_fields.ThemableSelectWidget(
                     attrs={'class': 'switched',
                            'data-switch-on': 'source',
                            'data-source-no_source_type': _(
@@ -358,9 +359,9 @@ class CreateForm(forms.SelfHandlingForm):
 
 
 class AttachForm(forms.SelfHandlingForm):
-    instance = forms.ThemableChoiceField(label=_("Attach to Instance"),
-                                         help_text=_("Select an instance to "
-                                                     "attach to."))
+    instance = common_fields.ThemableChoiceField(
+            label=_("Attach to Instance"),
+            help_text=_("Select an instance to attach to."))
 
     device = forms.CharField(label=_("Device Name"),
                              widget=forms.TextInput(attrs={'placeholder':
@@ -480,8 +481,8 @@ class CreateSnapshotForm(forms.SelfHandlingForm):
 
 
 class RollbackForm(forms.SelfHandlingForm):
-    snapshot = forms.ThemableChoiceField(label=_("Rollback Volume"),
-                                         help_text=_(
+    snapshot = common_fields.ThemableChoiceField(label=_("Rollback Volume"),
+                                                 help_text=_(
                                                    "Select an snapshot to "
                                                    "rollback."))
 
@@ -551,7 +552,7 @@ class UpdateForm(forms.SelfHandlingForm):
 class EnableForm(forms.SelfHandlingForm):
     volume_id = forms.ChoiceField(
             label=_("Select a volume to enable"),
-            widget=forms.ThemableSelectWidget(
+            widget=common_fields.ThemableSelectWidget(
                     attrs={'class': 'image-selector'},
                     data_attrs=('size', 'name'),
                     transform=lambda x: "%s (%s)" % (

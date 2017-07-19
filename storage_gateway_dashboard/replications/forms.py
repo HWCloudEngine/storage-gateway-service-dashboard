@@ -27,6 +27,7 @@ from horizon import messages
 from horizon.utils.memoized import memoized
 
 from storage_gateway_dashboard.api import api as sg_api
+from storage_gateway_dashboard.common import fields as common_fields
 
 
 class CreateForm(forms.SelfHandlingForm):
@@ -36,13 +37,13 @@ class CreateForm(forms.SelfHandlingForm):
             attrs={'rows': 4}), label=_("Description"), required=False)
     master_volume = forms.ChoiceField(
             label=_("Master Volume"),
-            widget=forms.ThemableSelectWidget(
+            widget=common_fields.ThemableSelectWidget(
                     attrs={'class': 'image-selector'},
                     data_attrs=('id', 'name'),
                     transform=lambda x: "%s (%s)" % (x.name, x.id)))
     slave_volume = forms.ChoiceField(
             label=_("Slave Volume"),
-            widget=forms.ThemableSelectWidget(
+            widget=common_fields.ThemableSelectWidget(
                     attrs={'class': 'image-selector'},
                     data_attrs=('id', 'name'),
                     transform=lambda x: "%s (%s)" % (x.name, x.id)))
@@ -153,10 +154,9 @@ class CreateCheckpointForm(forms.SelfHandlingForm):
 
 
 class RollbackForm(forms.SelfHandlingForm):
-    checkpoint = forms.ThemableChoiceField(label=_("Rollback Replication"),
-                                           help_text=_(
-                                                   "Select an checkpoint to "
-                                                   "rollback."))
+    checkpoint = common_fields.ThemableChoiceField(
+            label=_("Rollback Replication"),
+            help_text=_("Select an checkpoint to rollback."))
 
     def __init__(self, request, *args, **kwargs):
         super(RollbackForm, self).__init__(request, *args, **kwargs)

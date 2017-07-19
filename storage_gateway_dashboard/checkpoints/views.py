@@ -33,6 +33,7 @@ from storage_gateway_dashboard.common import table as common_table
 class CheckpointsView(tables.DataTableView, common_table.PagedTableMixin):
     table_class = checkpoint_tables.VolumeCheckpointsTable
     page_title = _("Checkpoints")
+    template_name = 'common/_data_table_view.html'
 
     def get_data(self):
         checkpoints = []

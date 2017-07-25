@@ -26,7 +26,6 @@ from horizon import messages
 
 from openstack_dashboard.api import cinder
 from storage_gateway_dashboard.api import api as sg_api
-from storage_gateway_dashboard.common import fields as common_fields
 
 
 class CreateBackupForm(forms.SelfHandlingForm):
@@ -54,8 +53,7 @@ class CreateBackupForm(forms.SelfHandlingForm):
 
 
 class RestoreBackupForm(forms.SelfHandlingForm):
-    volume_id = common_fields.ThemableChoiceField(label=_('Select Volume'),
-                                                  required=False)
+    volume_id = forms.ChoiceField(label=_('Select Volume'), required=False)
     backup_id = forms.CharField(widget=forms.HiddenInput())
     backup_name = forms.CharField(widget=forms.HiddenInput())
 

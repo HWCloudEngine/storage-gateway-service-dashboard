@@ -212,9 +212,8 @@ def volume_disable(request, volume_id):
     return sgsclient(request).volumes.disable(volume_id)
 
 
-def volume_attach(request, volume_id, instance_uuid, instance_ip, mode='rw'):
-    return sgsclient(request).volumes.attach(volume_id, instance_uuid,
-                                             instance_ip, mode)
+def volume_attach(request, volume_id, instance_uuid, mode='rw'):
+    return sgsclient(request).volumes.attach(volume_id, instance_uuid, mode)
 
 
 def volume_detach(request, volume_id, instance_uuid=None):

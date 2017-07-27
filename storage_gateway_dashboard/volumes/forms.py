@@ -32,7 +32,6 @@ from openstack_dashboard.api import nova
 from openstack_dashboard.usage import quotas
 
 from storage_gateway_dashboard.api import api as sg_api
-from storage_gateway_dashboard.common import fields as common_fields
 from storage_gateway_dashboard.volumes import tables
 
 
@@ -74,19 +73,19 @@ class CreateForm(forms.SelfHandlingForm):
     volume_source_type = forms.ChoiceField(
             label=_("Volume Source Type"),
             required=False,
-            widget=common_fields.ThemableSelectWidget(attrs={
+            widget=forms.SelectWidget(attrs={
                 'class': 'switchable',
                 'data-slug': 'source'}))
     snapshot_source = forms.ChoiceField(
             label=_("Use snapshot as a source"),
-            widget=common_fields.ThemableSelectWidget(
+            widget=forms.SelectWidget(
                     attrs={'class': 'snapshot-selector'},
                     data_attrs=('name', 'id'),
                     transform=lambda x: "%s (%s GiB)" % (x.name, x.id)),
             required=False)
     checkpoint_source = forms.ChoiceField(
             label=_("Use checkpoint as a source"),
-            widget=common_fields.ThemableSelectWidget(
+            widget=forms.SelectWidget(
                     attrs={'class': 'snapshot-selector'},
                     data_attrs=('name', 'id'),
                     transform=lambda x: "%s (%s GiB)" % (x.name, x.id)),
@@ -94,7 +93,7 @@ class CreateForm(forms.SelfHandlingForm):
     type = forms.ChoiceField(
             label=_("Type"),
             required=False,
-            widget=common_fields.ThemableSelectWidget(
+            widget=forms.SelectWidget(
                     attrs={'class': 'switched',
                            'data-switch-on': 'source',
                            'data-source-no_source_type': _('Type'),
@@ -103,7 +102,7 @@ class CreateForm(forms.SelfHandlingForm):
     availability_zone = forms.ChoiceField(
             label=_("Availability Zone"),
             required=False,
-            widget=common_fields.ThemableSelectWidget(
+            widget=forms.SelectWidget(
                     attrs={'class': 'switched',
                            'data-switch-on': 'source',
                            'data-source-no_source_type': _(
@@ -359,7 +358,7 @@ class CreateForm(forms.SelfHandlingForm):
 
 
 class AttachForm(forms.SelfHandlingForm):
-    instance = common_fields.ThemableChoiceField(
+    instance = forms.ChoiceField(
             label=_("Attach to Instance"),
             help_text=_("Select an instance to attach to."))
 
@@ -381,6 +380,7 @@ class AttachForm(forms.SelfHandlingForm):
                                 help_text=_(
                                         "The current version we need to "
                                         "provider the ip of instance"),
+                                required=False,
                                 version=forms.IPv4 | forms.IPv6)
 
     def __init__(self, *args, **kwargs):
@@ -422,14 +422,10 @@ class AttachForm(forms.SelfHandlingForm):
         # it, so let's slice that off...
         instance_name = instance_name.rsplit(" (")[0]
 
-        # api requires non-empty device name or None
-        instance_ip = data.get('instance_ip') or None
-
         try:
             sg_api.volume_attach(request,
                                  data['volume_id'],
-                                 data['instance'],
-                                 instance_ip)
+                                 data['instance'])
             volume = sg_api.volume_get(request, data['volume_id'])
             message = _('Attaching volume %(vol)s to instance '
                         '%(inst)s.') % {"vol": volume.name,
@@ -481,10 +477,8 @@ class CreateSnapshotForm(forms.SelfHandlingForm):
 
 
 class RollbackForm(forms.SelfHandlingForm):
-    snapshot = common_fields.ThemableChoiceField(label=_("Rollback Volume"),
-                                                 help_text=_(
-                                                   "Select an snapshot to "
-                                                   "rollback."))
+    snapshot = forms.ChoiceField(label=_("Rollback Volume"),
+                                 help_text=_("Select an snapshot to rollback"))
 
     def __init__(self, request, *args, **kwargs):
         super(RollbackForm, self).__init__(request, *args, **kwargs)
@@ -552,7 +546,7 @@ class UpdateForm(forms.SelfHandlingForm):
 class EnableForm(forms.SelfHandlingForm):
     volume_id = forms.ChoiceField(
             label=_("Select a volume to enable"),
-            widget=common_fields.ThemableSelectWidget(
+            widget=forms.SelectWidget(
                     attrs={'class': 'image-selector'},
                     data_attrs=('size', 'name'),
                     transform=lambda x: "%s (%s)" % (
